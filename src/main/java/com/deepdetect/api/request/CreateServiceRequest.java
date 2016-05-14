@@ -31,7 +31,7 @@ public class CreateServiceRequest extends DeepDetectRequest<CreateServiceRespons
 		private String name, url, mllib, descr;
 		private MLType mltype;
 
-		JsonObject model, input, output;
+		private JsonObject model, input, output;
 
 		public CreateServiceRequestBuilder name(String name) {
 			this.name = name;

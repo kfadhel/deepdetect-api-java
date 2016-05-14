@@ -27,7 +27,7 @@ public class PredictRequest extends DeepDetectRequest<PredictResponse> {
 
 	public static class PredictBuilder {
 		private String url, service;
-		JsonObject data;
+		private JsonObject data;
 
 		public PredictBuilder baseURL(String url) {
 			this.url = url;
