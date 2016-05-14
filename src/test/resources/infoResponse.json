@@ -1,0 +1,14 @@
+{
+    "status":{
+        "code":200,
+        "msg":"OK"
+        },
+    "head":
+        {
+        "method":"/info",
+        "version":"0.1",
+        "branch":"master",
+        "commit":"e8592d5de7f274a82d574025b5a2b647973fccb3",
+        "services":[]
+        }
+}
