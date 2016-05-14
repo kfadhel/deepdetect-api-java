@@ -67,7 +67,7 @@ public abstract class DeepDetectRequest<T extends DeepDetectResponse> {
 	 */
 	protected String doPost() {
 		return ClientBuilder.newClient().target(baseURL).path(getPath()).request()
-				.post(Entity.entity(getContent(), MediaType.APPLICATION_JSON), String.class);
+				.post(Entity.entity(getContent().toString(), MediaType.APPLICATION_JSON), String.class);
 	}
 
 	/**
@@ -76,8 +76,9 @@ public abstract class DeepDetectRequest<T extends DeepDetectResponse> {
 	 * @return server response as plain text
 	 */
 	protected String doPut() {
-		return ClientBuilder.newClient().target(baseURL).path(getPath()).request()
-				.put(Entity.entity(getContent(), MediaType.APPLICATION_JSON), String.class);
+		String result = ClientBuilder.newClient().target(baseURL).path(getPath()).request()
+				.put(Entity.entity(getContent().toString(), MediaType.APPLICATION_JSON), String.class);
+		return result;
 	}
 
 	/**
