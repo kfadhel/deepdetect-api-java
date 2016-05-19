@@ -6,7 +6,10 @@ import com.deepdetect.api.enums.Operation;
 import com.deepdetect.api.response.InfoServiceResponse;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class InfoServiceRequest extends DeepDetectRequest<InfoServiceResponse> {
 
@@ -73,7 +76,25 @@ public class InfoServiceRequest extends DeepDetectRequest<InfoServiceResponse> {
 
 	@Override
 	protected InfoServiceResponse internalProcess() {
-		return new Gson().fromJson(doGet(), InfoServiceResponse.class);
+		String stringResponse = doGet();
+
+		// create a jsonElement from String
+		JsonParser jsonParser = new JsonParser();
+		JsonElement jsonResponse = jsonParser.parse(stringResponse);
+
+		JsonElement jobs = jsonResponse.getAsJsonObject().get("body").getAsJsonObject().get("jobs");
+
+		// check if jobs is an array or an object:
+		// if it contains a single element, the server returns it as an object
+		// "jobs":{"job":1,"status":"running"}
+		// and then convert it to an array with single element
+		if (jobs.isJsonObject()) {
+			JsonArray jobsArray = new JsonArray();
+			jobsArray.add(jobs);
+			jsonResponse.getAsJsonObject().get("body").getAsJsonObject().add("jobs", jobsArray);
+		}
+
+		return new Gson().fromJson(jsonResponse, InfoServiceResponse.class);
 	}
 
 }

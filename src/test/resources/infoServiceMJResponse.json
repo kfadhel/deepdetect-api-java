@@ -1,0 +1,21 @@
+{
+  "status":{
+         "code":200,
+         "msg":"OK"
+      },
+  "body":{
+         "mllib":"caffe",
+         "description":"example classification service",
+         "name":"myserv",
+         "jobs":[
+        {
+          "job":1,
+          "status":"running"
+        },
+        {
+          "job":2,
+          "status":"running"
+        }
+        ]
+     }
+}
