@@ -1,17 +1,17 @@
 package com.deepdetect.api.response;
 
-import com.deepdetect.api.data.Head;
 import com.deepdetect.api.data.PredictBody;
+import com.deepdetect.api.data.PredictHead;
 
 /**
  * Make predictions from data
  */
 public class PredictResponse extends DeepDetectResponse {
 
-	private Head head;
+	private PredictHead head;
 	private PredictBody body;
 
-	public Head getHead() {
+	public PredictHead getHead() {
 		return head;
 	}
 

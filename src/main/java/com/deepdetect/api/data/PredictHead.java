@@ -1,25 +1,21 @@
 package com.deepdetect.api.data;
 
-public class Head {
+public class PredictHead {
 
 	String method;
-	int job;
-	String status;
+	String service;
 	double time;
 
 	public String getMethod() {
 		return method;
 	}
 
-	public int getJob() {
-		return job;
-	}
-
-	public String getStatus() {
-		return status;
+	public String getService() {
+		return service;
 	}
 
 	public double getTime() {
 		return time;
 	}
+
 }

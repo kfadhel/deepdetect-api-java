@@ -7,6 +7,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.RecordedRequest;
 
 public class CreateServiceRequestTest extends AbstractRequestTest {
 
@@ -25,9 +27,9 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 	private static final String ML_LIB = "caffe";
 	private static final String SERVICE_NAME = "myserv";
 	private static final MLType ML_TYPE = SUPERVISED;
-	private static JsonObject model;
-	private static JsonObject input;
-	private static JsonObject output;
+	private JsonObject model;
+	private JsonObject input;
+	private JsonObject output;
 
 	@Before
 	public void internalSetUp() {
@@ -110,7 +112,8 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 	}
 
 	@Test
-	public void testCreateServiceRequestReturnsExpectedResult() throws DeepDetectException, IOException {
+	public void testCreateServiceRequestReturnsExpectedResult()
+			throws DeepDetectException, IOException, InterruptedException {
 		server.enqueue(new MockResponse().setBody(getResourceAsString(CREATE_SERVICE_RESPONSE_FILE)));
 
 		CreateServiceResponse response = CreateServiceRequest.newCreateServiceRequest() //
@@ -124,8 +127,17 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 				.output(output) //
 				.build().process();
 
+		RecordedRequest request = server.takeRequest(2, TimeUnit.SECONDS);
+
+		String expectedRequestBody = "{\"mllib\":\"caffe\",\"description\":\"example classification service\",\"type\":\"supervised\",\"parameters\":{\"input\":{\"connector\":\"csv\"},\"mllib\":{\"template\":\"mlp\",\"nclasses\":9,\"activation\":\"prelu\",\"layers\":[512,512,512]}},\"model\":{\"repository\":\"/home/me/models/example\"}}";
+
+		assertThat(request.getPath(), is("/services/" + SERVICE_NAME));
+		assertThat(request.getMethod(), is("PUT"));
+		assertThat(request.getBody().readUtf8(), is(expectedRequestBody));
+
 		assertThat(response.getStatus().getCode(), is(201));
 		assertThat(response.getStatus().getMessage(), is("Created"));
+
 	}
 
 }

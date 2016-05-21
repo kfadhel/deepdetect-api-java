@@ -6,7 +6,10 @@ import com.deepdetect.api.enums.Operation;
 import com.deepdetect.api.response.PredictResponse;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class PredictRequest extends DeepDetectRequest<PredictResponse> {
 
@@ -27,7 +30,8 @@ public class PredictRequest extends DeepDetectRequest<PredictResponse> {
 
 	public static class PredictBuilder {
 		private String url, service;
-		private JsonObject data;
+		private JsonArray data;
+		private JsonObject params;
 
 		public PredictBuilder baseURL(String url) {
 			this.url = url;
@@ -39,7 +43,17 @@ public class PredictRequest extends DeepDetectRequest<PredictResponse> {
 			return this;
 		}
 
-		public PredictBuilder data(JsonObject data) {
+		public PredictBuilder parameters(JsonObject params) {
+			this.params = params;
+			return this;
+		}
+
+		public PredictBuilder data(String... dataArray) {
+			JsonArray data = new JsonArray();
+			for (String str : dataArray) {
+				data.add(str);
+			}
+
 			this.data = data;
 			return this;
 		}
@@ -59,7 +73,12 @@ public class PredictRequest extends DeepDetectRequest<PredictResponse> {
 			request.baseURL = url;
 			JsonObject requestData = new JsonObject();
 			requestData.addProperty("service", service);
-			requestData.add("parameters", data);
+
+			if (params != null)
+				requestData.add("parameters", params);
+
+			requestData.add("data", data);
+
 			request.data = requestData;
 			return request;
 		}
@@ -82,7 +101,24 @@ public class PredictRequest extends DeepDetectRequest<PredictResponse> {
 
 	@Override
 	protected PredictResponse internalProcess() {
-		return new Gson().fromJson(doPost(), PredictResponse.class);
+
+		String stringResponse = doPost();
+		// create a jsonElement from String
+		JsonParser jsonParser = new JsonParser();
+		JsonElement jsonResponse = jsonParser.parse(stringResponse);
+
+		JsonElement predictions = jsonResponse.getAsJsonObject().get("body").getAsJsonObject().get("predictions");
+
+		// check if predictions is an array or an object:
+		// if it contains a single element, the server returns it as an object
+		// and then convert it to an array with single element
+		if (predictions.isJsonObject()) {
+			JsonArray jobsArray = new JsonArray();
+			jobsArray.add(predictions);
+			jsonResponse.getAsJsonObject().get("body").getAsJsonObject().add("predictions", jobsArray);
+		}
+
+		return new Gson().fromJson(jsonResponse, PredictResponse.class);
 	}
 
 }

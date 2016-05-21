@@ -1,6 +1,6 @@
 package com.deepdetect.api.response;
 
-import com.deepdetect.api.data.Head;
+import com.deepdetect.api.data.JobHead;
 import com.deepdetect.api.data.InfoTrainJobBody;
 
 /**
@@ -8,10 +8,10 @@ import com.deepdetect.api.data.InfoTrainJobBody;
  */
 public class InfoTrainJobResponse extends DeepDetectResponse {
 
-	private Head head;
+	private JobHead head;
 	private InfoTrainJobBody body;
 
-	public Head getHead() {
+	public JobHead getHead() {
 		return head;
 	}
 

@@ -6,6 +6,7 @@ import com.deepdetect.api.enums.Operation;
 import com.deepdetect.api.response.TrainJobResponse;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
@@ -28,10 +29,16 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 	public static class TrainJobBuilder {
 		private String url, service;
 		private Boolean async;
-		private JsonObject data;
+		private JsonObject parameters;
+		private JsonArray data;
 
 		public TrainJobBuilder baseURL(String url) {
 			this.url = url;
+			return this;
+		}
+
+		public TrainJobBuilder service(String service) {
+			this.service = service;
 			return this;
 		}
 
@@ -41,7 +48,15 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 		}
 
 		public TrainJobBuilder parameters(JsonObject params) {
-			this.data = params;
+			this.parameters = params;
+			return this;
+		}
+
+		public TrainJobBuilder data(String... dataArray) {
+			JsonArray array = new JsonArray();
+			for (String str : dataArray)
+				array.add(str);
+			this.data = array;
 			return this;
 		}
 
@@ -55,6 +70,7 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 			checkArgument(!Strings.isNullOrEmpty(url), "url is required");
 			checkArgument(!Strings.isNullOrEmpty(service), "service name is required");
 			checkArgument(async != null, "async is required");
+			checkArgument(parameters != null, "parameters is required");
 
 			TrainJobRequest request = new TrainJobRequest();
 			request.baseURL = url;
@@ -62,8 +78,9 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 			JsonObject content = new JsonObject();
 			content.addProperty("service", service);
 			content.addProperty("async", async);
+			content.add("parameters", parameters);
 			if (data != null)
-				content.add("parameters", data);
+				content.add("data", data);
 
 			request.jsonContent = content;
 

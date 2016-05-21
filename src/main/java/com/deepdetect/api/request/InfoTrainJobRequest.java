@@ -91,7 +91,7 @@ public class InfoTrainJobRequest extends DeepDetectRequest<InfoTrainJobResponse>
 
 	@Override
 	protected String getPath() {
-		return getOperation() + "?service=" + service + "&job=" + jobId;
+		return getOperation().getValue() + "?service=" + service + "&job=" + jobId;
 	}
 
 	@Override
