@@ -1,0 +1,12 @@
+{
+   "status":{
+      "code":200,
+      "msg":"OK"
+   },
+   "head":{
+      "time":196.0,
+      "status":"terminated",
+      "method":"/train",
+      "job":1
+   }
+}

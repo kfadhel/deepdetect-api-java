@@ -1,0 +1,20 @@
+{
+   "status":{
+      "code":200,
+      "msg":"OK"
+   },
+   "head":{
+      "method":"/train",
+      "job":1,
+      "status":"running",
+      "time":74.0
+   },
+   "body":{
+      "measure":{
+         "iteration":445.0,
+         "train_loss":0.7159726023674011,
+         "mcll":2.1306082640485237,
+         "acc":0.16127989657401424
+      }
+   }
+}

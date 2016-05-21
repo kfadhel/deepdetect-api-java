@@ -1,0 +1,31 @@
+{
+   "status":{
+      "code":200,
+      "msg":"OK"
+   },
+   "head":{
+      "method":"/predict",
+      "time":1591.0,
+      "service":"imageserv"
+   },
+   "body":{
+      "predictions":{
+         "uri":"http://i.ytimg.com/vi/0vxOhd4qlnA/maxresdefault.jpg",
+         "loss":0.0,
+         "classes":[
+            {
+               "prob":0.24278657138347627,
+               "cat":"n03868863 oxygen mask"
+            },
+            {
+               "prob":0.20703653991222382,
+               "cat":"n03127747 crash helmet"
+            },
+            {
+               "prob":0.07931024581193924,
+               "cat":"n03379051 football helmet"
+            }
+         ]
+      }
+   }
+}
