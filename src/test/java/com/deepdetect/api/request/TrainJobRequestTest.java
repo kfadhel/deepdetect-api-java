@@ -23,22 +23,24 @@ public class TrainJobRequestTest extends AbstractRequestTest {
 
 	private static final String SERVICE_NAME = "myserv";
 	private static final String DATA = "/home/me/example/train.csv";
-	private JsonObject parameters;
+	private JsonObject mllibParams, input, output;
 
 	@Before
 	public void internalSetUp() {
 		JsonParser jsonParser = new JsonParser();
-		parameters = jsonParser.parse(
-				"{\"mllib\":{\"gpu\":true,\"solver\":{\"iterations\":300,\"test_interval\":100},\"net\":{\"batch_size\":5000}},\"input\":{\"label\":\"target\",\"id\":\"id\",\"separator\":\",\",\"shuffle\":true,\"test_split\":0.15,\"scale\":true},\"output\":{\"measure\":[\"acc\",\"mcll\"]}}") //
-				.getAsJsonObject();
 
+		mllibParams = jsonParser.parse("{\"gpu\":true,\"solver\":{\"iterations\":300,\"test_interval\":100},\"net\":{\"batch_size\":5000}}").getAsJsonObject();
+		input = jsonParser.parse("{\"label\":\"target\",\"id\":\"id\",\"separator\":\",\",\"shuffle\":true,\"test_split\":0.15,\"scale\":true}").getAsJsonObject();
+		output = jsonParser.parse("{\"measure\":[\"acc\",\"mcll\"]}").getAsJsonObject();
 	}
 
 	@Override
 	public void testRequestRequiresBaseURL() throws DeepDetectException {
 		TrainJobRequest.newTrainJobRequest()//
 				.async(true) //
-				.parameters(parameters) //
+				.mllibParams(mllibParams) //
+				.input(input) //
+				.output(output) //
 				.data(DATA) //
 				.build();
 	}
@@ -48,27 +50,41 @@ public class TrainJobRequestTest extends AbstractRequestTest {
 		TrainJobRequest.newTrainJobRequest() //
 				.baseURL(baseUrl) //
 				.async(true) //
-				.parameters(parameters) //
+				.mllibParams(mllibParams) //
+				.input(input) //
+				.output(output) //
 				.data(DATA) //
 				.build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testTrainJobRequestRequiresAsyncType() {
+	public void testTrainJobRequestRequiresJsonMllibParams() {
 		TrainJobRequest.newTrainJobRequest() //
 				.baseURL(baseUrl) //
 				.service(SERVICE_NAME) //
-				.parameters(parameters) //
+				.input(input) //
+				.output(output) //
 				.data(DATA) //
 				.build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testTrainJobRequestRequiresJsonParameters() {
+	public void testTrainJobRequestRequiresJsonInput() {
 		TrainJobRequest.newTrainJobRequest() //
 				.baseURL(baseUrl) //
 				.service(SERVICE_NAME) //
-				.parameters(parameters) //
+				.mllibParams(mllibParams) //
+				.output(output) //
+				.data(DATA) //
+				.build();
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testTrainJobRequestRequiresJsonOutput() {
+		TrainJobRequest.newTrainJobRequest() //
+				.baseURL(baseUrl) //
+				.service(SERVICE_NAME) //
+				.mllibParams(mllibParams) //
 				.data(DATA) //
 				.build();
 	}
@@ -83,7 +99,9 @@ public class TrainJobRequestTest extends AbstractRequestTest {
 				.baseURL(baseUrl) //
 				.service(SERVICE_NAME) //
 				.async(false) //
-				.parameters(parameters) //
+				.mllibParams(mllibParams) //
+				.input(input) //
+				.output(output) //
 				.data(DATA) //
 				.build().process();
 

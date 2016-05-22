@@ -68,21 +68,8 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 				.type(ML_TYPE) //
 				.input(input) //
 				.model(model) //
-				.output(output) //
-				.build().process();
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testCreateServiceRequestRequiresMlType() throws DeepDetectException {
-		CreateServiceRequest.newCreateServiceRequest() //
-				.baseURL(baseUrl) //
-				.name(SERVICE_NAME) //
-				.description(DESCRIPTION) //
-				.mllib(ML_LIB) //
-				.input(input) //
-				.model(model) //
-				.output(output) //
-				.build().process();
+				.mllibParams(output) //
+				.build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -94,8 +81,8 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 				.mllib(ML_LIB) //
 				.type(ML_TYPE) //
 				.input(input) //
-				.output(output) //
-				.build().process();
+				.mllibParams(output) //
+				.build();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -107,8 +94,8 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 				.mllib(ML_LIB) //
 				.type(ML_TYPE) //
 				.model(model) //
-				.output(output) //
-				.build().process();
+				.mllibParams(output) //
+				.build();
 	}
 
 	@Test
@@ -124,7 +111,7 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 				.type(ML_TYPE) //
 				.input(input) //
 				.model(model) //
-				.output(output) //
+				.mllibParams(output) //
 				.build().process();
 
 		RecordedRequest request = server.takeRequest(2, TimeUnit.SECONDS);

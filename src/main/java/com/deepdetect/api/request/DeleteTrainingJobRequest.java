@@ -2,6 +2,9 @@ package com.deepdetect.api.request;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.deepdetect.api.enums.Operation;
 import com.deepdetect.api.response.DeleteTrainingJobResponse;
 import com.google.common.base.Strings;
@@ -71,7 +74,7 @@ public class DeleteTrainingJobRequest extends DeepDetectRequest<DeleteTrainingJo
 
 	@Override
 	protected String getPath() {
-		return getOperation().getValue() + "?service=" + service + "&job=" + jobId;
+		return getOperation().getValue();
 	}
 
 	@Override
@@ -82,6 +85,14 @@ public class DeleteTrainingJobRequest extends DeepDetectRequest<DeleteTrainingJo
 	@Override
 	protected DeleteTrainingJobResponse internalProcess() {
 		return new Gson().fromJson(doDelete(), DeleteTrainingJobResponse.class);
+	}
+
+	@Override
+	protected Map<String, String> getRequestParams() {
+		Map<String, String> requestParams = new HashMap<String, String>();
+		requestParams.put("service", service);
+		requestParams.put("job", String.valueOf(jobId));
+		return requestParams;
 	}
 
 }

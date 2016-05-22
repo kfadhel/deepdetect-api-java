@@ -1,7 +1,10 @@
 package com.deepdetect.api.request;
 
+import java.util.Map;
+
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import com.deepdetect.api.enums.Operation;
@@ -21,6 +24,8 @@ public abstract class DeepDetectRequest<T extends DeepDetectResponse> {
 	protected String baseURL;
 
 	protected abstract JsonObject getContent();
+
+	protected abstract Map<String, String> getRequestParams();
 
 	protected abstract String getPath();
 
@@ -57,7 +62,8 @@ public abstract class DeepDetectRequest<T extends DeepDetectResponse> {
 	 * @return server response as plain text
 	 */
 	protected String doGet() {
-		return ClientBuilder.newClient().target(baseURL).path(getPath()).request().get(String.class);
+		WebTarget target = addParams(ClientBuilder.newClient().target(baseURL).path(getPath()));
+		return target.request().get(String.class);
 	}
 
 	/**
@@ -87,6 +93,15 @@ public abstract class DeepDetectRequest<T extends DeepDetectResponse> {
 	 * @return server response as plain text
 	 */
 	protected String doDelete() {
-		return ClientBuilder.newClient().target(baseURL).path(getPath()).request().delete(String.class);
+		WebTarget target = addParams(ClientBuilder.newClient().target(baseURL).path(getPath()));
+		return target.request().delete(String.class);
+	}
+
+	// add parameters to request
+	private WebTarget addParams(WebTarget target) {
+		for (String paramName : getRequestParams().keySet()) {
+			target = target.queryParam(paramName, getRequestParams().get(paramName));
+		}
+		return target;
 	}
 }

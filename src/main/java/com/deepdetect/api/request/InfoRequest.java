@@ -2,6 +2,9 @@ package com.deepdetect.api.request;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.deepdetect.api.enums.Operation;
 import com.deepdetect.api.response.InfoResponse;
 import com.google.common.base.Strings;
@@ -68,5 +71,10 @@ public class InfoRequest extends DeepDetectRequest<InfoResponse> {
 	@Override
 	protected InfoResponse internalProcess() {
 		return new Gson().fromJson(doGet(), InfoResponse.class);
+	}
+
+	@Override
+	protected Map<String, String> getRequestParams() {
+		return new HashMap<String, String>();
 	}
 }

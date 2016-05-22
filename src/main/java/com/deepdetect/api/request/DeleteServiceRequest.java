@@ -2,6 +2,9 @@ package com.deepdetect.api.request;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.deepdetect.api.enums.Operation;
 import com.deepdetect.api.response.DeleteServiceResponse;
 import com.google.common.base.Strings;
@@ -70,13 +73,7 @@ public class DeleteServiceRequest extends DeepDetectRequest<DeleteServiceRespons
 
 	@Override
 	protected String getPath() {
-		StringBuilder path = new StringBuilder(getOperation().getValue());
-		path.append("/").append(service);
-
-		if (clearServiceType != null)
-			path.append("?clear=").append(clearServiceType);
-
-		return path.toString();
+		return getOperation().getValue() + "/" + service;
 	}
 
 	@Override
@@ -87,6 +84,14 @@ public class DeleteServiceRequest extends DeepDetectRequest<DeleteServiceRespons
 	@Override
 	protected DeleteServiceResponse internalProcess() {
 		return new Gson().fromJson(doDelete(), DeleteServiceResponse.class);
+	}
+
+	@Override
+	protected Map<String, String> getRequestParams() {
+		Map<String, String> requestParams = new HashMap<String, String>();
+		if (clearServiceType != null)
+			requestParams.put("clear", clearServiceType);
+		return requestParams;
 	}
 
 }

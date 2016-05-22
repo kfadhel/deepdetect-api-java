@@ -2,6 +2,9 @@ package com.deepdetect.api.request;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.deepdetect.api.enums.Operation;
 import com.deepdetect.api.response.TrainJobResponse;
 import com.google.common.base.Strings;
@@ -28,9 +31,10 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 
 	public static class TrainJobBuilder {
 		private String url, service;
-		private Boolean async;
-		private JsonObject parameters;
+		private boolean async;
 		private JsonArray data;
+
+		private JsonObject mllibParams, input, output;
 
 		public TrainJobBuilder baseURL(String url) {
 			this.url = url;
@@ -47,8 +51,18 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 			return this;
 		}
 
-		public TrainJobBuilder parameters(JsonObject params) {
-			this.parameters = params;
+		public TrainJobBuilder mllibParams(JsonObject mllibParams) {
+			this.mllibParams = mllibParams;
+			return this;
+		}
+
+		public TrainJobBuilder input(JsonObject input) {
+			this.input = input;
+			return this;
+		}
+
+		public TrainJobBuilder output(JsonObject output) {
+			this.output = output;
 			return this;
 		}
 
@@ -69,8 +83,9 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 
 			checkArgument(!Strings.isNullOrEmpty(url), "url is required");
 			checkArgument(!Strings.isNullOrEmpty(service), "service name is required");
-			checkArgument(async != null, "async is required");
-			checkArgument(parameters != null, "parameters is required");
+			checkArgument(mllibParams != null, "mllibParams is required");
+			checkArgument(input != null, "input is required");
+			checkArgument(output != null, "output is required");
 
 			TrainJobRequest request = new TrainJobRequest();
 			request.baseURL = url;
@@ -78,7 +93,14 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 			JsonObject content = new JsonObject();
 			content.addProperty("service", service);
 			content.addProperty("async", async);
-			content.add("parameters", parameters);
+
+			JsonObject paramsJson = new JsonObject();
+			paramsJson.add("mllib", mllibParams);
+			paramsJson.add("input", input);
+			paramsJson.add("output", output);
+
+			content.add("parameters", paramsJson);
+
 			if (data != null)
 				content.add("data", data);
 
@@ -107,6 +129,11 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 	@Override
 	protected TrainJobResponse internalProcess() {
 		return new Gson().fromJson(doPut(), TrainJobResponse.class);
+	}
+
+	@Override
+	protected Map<String, String> getRequestParams() {
+		return new HashMap<String, String>();
 	}
 
 }

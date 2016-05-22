@@ -1,6 +1,10 @@
 package com.deepdetect.api.request;
 
+import static com.deepdetect.api.enums.MLType.SUPERVISED;
 import static com.google.common.base.Preconditions.checkArgument;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.deepdetect.api.enums.MLType;
 import com.deepdetect.api.enums.Operation;
@@ -29,9 +33,9 @@ public class CreateServiceRequest extends DeepDetectRequest<CreateServiceRespons
 
 	public static class CreateServiceRequestBuilder {
 		private String name, url, mllib, descr;
-		private MLType mltype;
+		private MLType mltype = SUPERVISED;
 
-		private JsonObject model, input, output;
+		private JsonObject model, input, mllibParams;
 
 		public CreateServiceRequestBuilder name(String name) {
 			this.name = name;
@@ -68,8 +72,8 @@ public class CreateServiceRequest extends DeepDetectRequest<CreateServiceRespons
 			return this;
 		}
 
-		public CreateServiceRequestBuilder output(JsonObject output) {
-			this.output = output;
+		public CreateServiceRequestBuilder mllibParams(JsonObject mllibParams) {
+			this.mllibParams = mllibParams;
 			return this;
 		}
 
@@ -99,8 +103,8 @@ public class CreateServiceRequest extends DeepDetectRequest<CreateServiceRespons
 
 			JsonObject paramsJson = new JsonObject();
 			paramsJson.add("input", input);
-			if (output != null)
-				paramsJson.add("mllib", output);
+			if (mllibParams != null)
+				paramsJson.add("mllib", mllibParams);
 
 			json.add("parameters", paramsJson);
 
@@ -130,6 +134,11 @@ public class CreateServiceRequest extends DeepDetectRequest<CreateServiceRespons
 	@Override
 	protected String getPath() {
 		return getOperation().getValue() + "/" + serviceName;
+	}
+
+	@Override
+	protected Map<String, String> getRequestParams() {
+		return new HashMap<String, String>();
 	}
 
 }

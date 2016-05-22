@@ -1,5 +1,7 @@
 package com.deepdetect.api.data;
 
+import com.google.gson.Gson;
+
 public class TrainJobMeasure {
 
 	double iteration;
@@ -21,5 +23,10 @@ public class TrainJobMeasure {
 
 	public double getAcc() {
 		return acc;
+	}
+
+	@Override
+	public String toString() {
+		return new Gson().toJson(this).toString();
 	}
 }
