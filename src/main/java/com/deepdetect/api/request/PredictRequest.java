@@ -115,11 +115,23 @@ public class PredictRequest extends DeepDetectRequest<PredictResponse> {
 		// check if predictions is an array or an object:
 		// if it contains a single element, the server returns it as an object
 		// and then convert it to an array with single element
+
+		JsonArray jobsArray = new JsonArray();
 		if (predictions.isJsonObject()) {
-			JsonArray jobsArray = new JsonArray();
 			jobsArray.add(predictions);
-			jsonResponse.getAsJsonObject().get("body").getAsJsonObject().add("predictions", jobsArray);
+		} else {
+			jobsArray = predictions.getAsJsonArray();
 		}
+
+		for (JsonElement elmnt : jobsArray) {
+			if (elmnt.getAsJsonObject().get("classes").isJsonObject()) {
+				JsonArray classesArray = new JsonArray();
+				classesArray.add(elmnt.getAsJsonObject().get("classes"));
+				elmnt.getAsJsonObject().add("classes", classesArray);
+			}
+		}
+
+		jsonResponse.getAsJsonObject().get("body").getAsJsonObject().add("predictions", jobsArray);
 
 		return new Gson().fromJson(jsonResponse, PredictResponse.class);
 	}
