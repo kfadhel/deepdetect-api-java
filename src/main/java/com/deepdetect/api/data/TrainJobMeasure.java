@@ -4,25 +4,25 @@ import com.google.gson.Gson;
 
 public class TrainJobMeasure {
 
-	double iteration;
-	double train_loss;
-	double mcll;
-	double acc;
+	long iteration;
+	String train_loss;
+	String mcll;
+	String acc;
 
-	public double getIteration() {
+	public long getIteration() {
 		return iteration;
 	}
 
 	public double getTrainLoss() {
-		return train_loss;
+		return Double.valueOf(train_loss);
 	}
 
 	public double getMcll() {
-		return mcll;
+		return Double.valueOf(mcll);
 	}
 
 	public double getAcc() {
-		return acc;
+		return Double.valueOf(acc);
 	}
 
 	@Override

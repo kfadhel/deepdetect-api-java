@@ -66,6 +66,6 @@ public class InfoTrainJobRequestTest extends AbstractRequestTest {
 		assertThat(response.getStatus().getCode(), is(200));
 		assertThat(response.getStatus().getMessage(), is("OK"));
 		assertThat(response.getHead().getStatus(), is("running"));
-		assertThat(response.getBody().getMeasure().getIteration(), is(445.0));
+		assertThat(response.getBody().getMeasure().getIteration(), is(445L));
 	}
 }
