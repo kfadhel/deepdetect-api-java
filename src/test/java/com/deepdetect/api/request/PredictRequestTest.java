@@ -25,13 +25,15 @@ public class PredictRequestTest extends AbstractRequestTest {
 
 	private static final String SERVICE_NAME = "imageserv";
 	private static final String DATA = "http://i.ytimg.com/vi/0vxOhd4qlnA/maxresdefault.jpg";
-	private JsonObject params;
+	private JsonObject input, output, mllibParams;
 
 	@Before
 	public void internalSetUp() {
 		JsonParser jsonParser = new JsonParser();
-		params = jsonParser.parse("{\"input\":{\"width\":224,\"height\":224},\"output\":{\"best\":3}}") //
-				.getAsJsonObject();
+		input = jsonParser.parse("{\"width\":224,\"height\":224}").getAsJsonObject();
+		output = jsonParser.parse("{\"best\":3}").getAsJsonObject();
+		mllibParams = jsonParser.parse("{\"gpu\":true}").getAsJsonObject();
+
 	}
 
 	@Override
@@ -39,7 +41,9 @@ public class PredictRequestTest extends AbstractRequestTest {
 		PredictRequest.newPredictRequest() //
 				.service(SERVICE_NAME) //
 				.data(DATA) //
-				.parameters(params) //
+				.input(input) //
+				.output(output) //
+				.mllibParams(mllibParams) //
 				.build();
 	}
 
@@ -48,7 +52,9 @@ public class PredictRequestTest extends AbstractRequestTest {
 		PredictRequest.newPredictRequest() //
 				.baseURL(baseUrl) //
 				.data(DATA) //
-				.parameters(params) //
+				.input(input) //
+				.output(output) //
+				.mllibParams(mllibParams) //
 				.build();
 	}
 
@@ -57,7 +63,9 @@ public class PredictRequestTest extends AbstractRequestTest {
 		PredictRequest.newPredictRequest() //
 				.baseURL(baseUrl) //
 				.service(SERVICE_NAME) //
-				.parameters(params) //
+				.input(input) //
+				.output(output) //
+				.mllibParams(mllibParams) //
 				.build();
 	}
 
@@ -71,14 +79,16 @@ public class PredictRequestTest extends AbstractRequestTest {
 				.baseURL(baseUrl) //
 				.service(SERVICE_NAME) //
 				.data(DATA) //
-				.parameters(params) //
+				.input(input) //
+				.output(output) //
+				.mllibParams(mllibParams) //
 				.build().process();
 
 		RecordedRequest request = server.takeRequest(2, SECONDS);
 		assertThat(request.getMethod(), is("POST"));
 		assertThat(request.getPath(), is("/predict"));
 
-		String expectedBody = "{\"service\":\"imageserv\",\"parameters\":{\"input\":{\"width\":224,\"height\":224},\"output\":{\"best\":3}},\"data\":[\"http://i.ytimg.com/vi/0vxOhd4qlnA/maxresdefault.jpg\"]}";
+		String expectedBody = "{\"service\":\"imageserv\",\"parameters\":{\"input\":{\"width\":224,\"height\":224},\"output\":{\"best\":3},\"mllib\":{\"gpu\":true}},\"data\":[\"http://i.ytimg.com/vi/0vxOhd4qlnA/maxresdefault.jpg\"]}";
 		assertThat(request.getBody().readUtf8(), is(expectedBody));
 
 		assertThat(response.getStatus().getCode(), is(200));

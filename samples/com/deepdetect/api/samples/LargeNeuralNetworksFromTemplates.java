@@ -52,12 +52,14 @@ public class LargeNeuralNetworksFromTemplates {
 
 		Thread.sleep(1000);
 
-		JsonObject params = parser.parse("{'input':{'width':224,'height':224},'output':{'best':3}}").getAsJsonObject();
+		JsonObject input = parser.parse("{'width':224,'height':224}").getAsJsonObject();
+		JsonObject output = parser.parse("{'best':3}").getAsJsonObject();
 		PredictResponse response = PredictRequest.newPredictRequest() //
 				.baseURL(host) //
 				.service(serviceName) //
 				.data("http://i.ytimg.com/vi/0vxOhd4qlnA/maxresdefault.jpg") //
-				.parameters(params) //
+				.input(input) //
+				.output(output) //
 				.build().process();
 
 		System.out.println(response);
