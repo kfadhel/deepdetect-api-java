@@ -19,8 +19,9 @@ public class CharacterBasedDeepConvolutionalNeuralNetworks {
 	// http://www.deepdetect.com/applications/text_model/
 	public static void main(String[] args) throws DeepDetectException, InterruptedException {
 
-		if (args.length < 1) {
-			System.err.println("you need to provide repository");
+		if (args.length < 2) {
+			System.err.println("you need to provide repository and data");
+			System.err.println("use <repository> <'text1' 'text2' ... 'textn'>");
 			System.exit(2);
 		}
 

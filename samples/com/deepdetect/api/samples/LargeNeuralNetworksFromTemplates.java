@@ -18,6 +18,7 @@ public class LargeNeuralNetworksFromTemplates {
 
 		if (args.length < 1) {
 			System.err.println("you need to provide repository");
+			System.err.println("use <repository>");
 			System.exit(2);
 		}
 

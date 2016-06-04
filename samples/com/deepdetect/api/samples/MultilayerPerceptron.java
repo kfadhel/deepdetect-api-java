@@ -18,6 +18,7 @@ public class MultilayerPerceptron {
 
 		if (args.length < 2) {
 			System.err.println("you need to provide repository and data folder");
+			System.err.println("use <repository> <datafile>");
 			System.exit(2);
 		}
 
