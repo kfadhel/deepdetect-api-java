@@ -9,8 +9,6 @@ import com.deepdetect.api.response.CreateServiceResponse;
 import com.deepdetect.api.response.InfoTrainJobResponse;
 import com.deepdetect.api.response.TrainJobResponse;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class MultilayerPerceptron {
 
@@ -26,7 +24,6 @@ public class MultilayerPerceptron {
 		String dataFile = args[1];
 
 		String host = "http://localhost:8080";
-		JsonParser parser = new JsonParser();
 
 		// creating the service
 		String serviceName = "covert";
@@ -38,12 +35,9 @@ public class MultilayerPerceptron {
 		layers.add(150);
 		layers.add(150);
 
-		JsonObject createSModel = parser.parse("{'templates':'../templates/caffe/','repository':'" + repository + "'}")
-				.getAsJsonObject();
-		JsonObject createSInput = parser.parse("{'connector':'csv'}").getAsJsonObject();
-		JsonObject createSOutput = parser.parse("{'template':'mlp','nclasses':7,'activation':'prelu','dropout':0.2}")
-				.getAsJsonObject();
-		createSOutput.add("layers", layers);
+		String createSModel = "{'templates':'../templates/caffe/','repository':'" + repository + "'}";
+		String createSInput = "{'connector':'csv'}";
+		String createSOutput = "{'template':'mlp','nclasses':7,'activation':'prelu','dropout':0.2,'layers':[150,150,150]}";
 
 		CreateServiceResponse createSResponse = CreateServiceRequest.newCreateServiceRequest() //
 				.baseURL(host) //
@@ -58,13 +52,9 @@ public class MultilayerPerceptron {
 		System.out.println("CreateServiceResponse : " + createSResponse);
 
 		// training
-		JsonObject trainInput = parser
-				.parse("{'shuffle':True,'test_split':0.1,'id':'Id','label':'Cover_Type','separator':',','scale':True,'label_offset':-1}")
-				.getAsJsonObject();
-		JsonObject trainMllib = parser
-				.parse("{'gpu':True,'solver':{'iterations':10000,'test_interval':100,'base_lr':0.05},'net':{'batch_size':500}}")
-				.getAsJsonObject();
-		JsonObject trainOutput = parser.parse("{'measure':['f1','mcll']}").getAsJsonObject();
+		String trainInput = "{'shuffle':True,'test_split':0.1,'id':'Id','label':'Cover_Type','separator':',','scale':True,'label_offset':-1}";
+		String trainMllib = "{'gpu':True,'solver':{'iterations':10000,'test_interval':100,'base_lr':0.05},'net':{'batch_size':500}}";
+		String trainOutput = "{'measure':['f1','mcll']}";
 
 		TrainJobResponse trainResponse = TrainJobRequest.newTrainJobRequest() //
 				.baseURL(host) //

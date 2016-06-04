@@ -8,8 +8,6 @@ import com.deepdetect.api.request.DeleteServiceRequest;
 import com.deepdetect.api.request.PredictRequest;
 import com.deepdetect.api.response.CreateServiceResponse;
 import com.deepdetect.api.response.PredictResponse;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class LargeNeuralNetworksFromTemplates {
 	// you need to get the pre-trained model
@@ -25,17 +23,15 @@ public class LargeNeuralNetworksFromTemplates {
 		String repository = args[0];
 
 		String host = "http://localhost:8080";
-		JsonParser parser = new JsonParser();
 
 		// creating the service
 		String serviceName = "imagenet";
 		String description = "image classification service";
 		String mllib = "caffe";
 
-		JsonObject createSModel = parser.parse("{'templates':'../templates/caffe/','repository':'" + repository + "'}")
-				.getAsJsonObject();
-		JsonObject createSInput = parser.parse("{'connector':'image'}").getAsJsonObject();
-		JsonObject createSOutput = parser.parse("{'template':'googlenet','nclasses':1000}").getAsJsonObject();
+		String createSModel = "{'templates':'../templates/caffe/','repository':'" + repository + "'}";
+		String createSInput = "{'connector':'image'}";
+		String createSOutput = "{'template':'googlenet','nclasses':1000}";
 
 		CreateServiceResponse createSResponse = CreateServiceRequest.newCreateServiceRequest() //
 				.baseURL(host) //
@@ -52,8 +48,8 @@ public class LargeNeuralNetworksFromTemplates {
 
 		Thread.sleep(1000);
 
-		JsonObject input = parser.parse("{'width':224,'height':224}").getAsJsonObject();
-		JsonObject output = parser.parse("{'best':3}").getAsJsonObject();
+		String input = "{'width':224,'height':224}";
+		String output = "{'best':3}";
 		PredictResponse response = PredictRequest.newPredictRequest() //
 				.baseURL(host) //
 				.service(serviceName) //

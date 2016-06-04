@@ -12,6 +12,7 @@ import com.deepdetect.api.response.CreateServiceResponse;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class CreateServiceRequest extends DeepDetectRequest<CreateServiceResponse> {
 
@@ -36,6 +37,8 @@ public class CreateServiceRequest extends DeepDetectRequest<CreateServiceRespons
 		private MLType mltype = SUPERVISED;
 
 		private JsonObject model, input, mllibParams;
+
+		private JsonParser jsonParser = new JsonParser();
 
 		public CreateServiceRequestBuilder name(String name) {
 			this.name = name;
@@ -67,13 +70,28 @@ public class CreateServiceRequest extends DeepDetectRequest<CreateServiceRespons
 			return this;
 		}
 
+		public CreateServiceRequestBuilder model(String modelString) {
+			this.model = jsonParser.parse(modelString).getAsJsonObject();
+			return this;
+		}
+
 		public CreateServiceRequestBuilder input(JsonObject input) {
 			this.input = input;
 			return this;
 		}
 
+		public CreateServiceRequestBuilder input(String inputString) {
+			this.input = jsonParser.parse(inputString).getAsJsonObject();
+			return this;
+		}
+
 		public CreateServiceRequestBuilder mllibParams(JsonObject mllibParams) {
 			this.mllibParams = mllibParams;
+			return this;
+		}
+
+		public CreateServiceRequestBuilder mllibParams(String mllibParamsString) {
+			this.mllibParams = jsonParser.parse(mllibParamsString).getAsJsonObject();
 			return this;
 		}
 

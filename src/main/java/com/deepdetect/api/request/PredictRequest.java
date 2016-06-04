@@ -36,6 +36,8 @@ public class PredictRequest extends DeepDetectRequest<PredictResponse> {
 		private JsonArray data;
 		private JsonObject input, output, mllibParams;
 
+		private JsonParser jsonParser = new JsonParser();
+
 		public PredictBuilder baseURL(String url) {
 			this.url = url;
 			return this;
@@ -51,13 +53,28 @@ public class PredictRequest extends DeepDetectRequest<PredictResponse> {
 			return this;
 		}
 
+		public PredictBuilder mllibParams(String mllibParamsString) {
+			this.mllibParams = jsonParser.parse(mllibParamsString).getAsJsonObject();
+			return this;
+		}
+
 		public PredictBuilder input(JsonObject input) {
 			this.input = input;
 			return this;
 		}
 
+		public PredictBuilder input(String inputString) {
+			this.input = jsonParser.parse(inputString).getAsJsonObject();
+			return this;
+		}
+
 		public PredictBuilder output(JsonObject output) {
 			this.output = output;
+			return this;
+		}
+
+		public PredictBuilder output(String outputString) {
+			this.output = jsonParser.parse(outputString).getAsJsonObject();
 			return this;
 		}
 

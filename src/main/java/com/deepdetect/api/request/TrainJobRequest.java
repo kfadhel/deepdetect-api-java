@@ -11,6 +11,7 @@ import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 
@@ -36,6 +37,8 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 
 		private JsonObject mllibParams, input, output;
 
+		private JsonParser jsonParser = new JsonParser();
+
 		public TrainJobBuilder baseURL(String url) {
 			this.url = url;
 			return this;
@@ -56,13 +59,28 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 			return this;
 		}
 
+		public TrainJobBuilder mllibParams(String mllibParamsString) {
+			this.mllibParams = jsonParser.parse(mllibParamsString).getAsJsonObject();
+			return this;
+		}
+
 		public TrainJobBuilder input(JsonObject input) {
 			this.input = input;
 			return this;
 		}
 
+		public TrainJobBuilder input(String inputString) {
+			this.input = jsonParser.parse(inputString).getAsJsonObject();
+			return this;
+		}
+
 		public TrainJobBuilder output(JsonObject output) {
 			this.output = output;
+			return this;
+		}
+
+		public TrainJobBuilder output(String outputString) {
+			this.output = jsonParser.parse(outputString).getAsJsonObject();
 			return this;
 		}
 
@@ -112,7 +130,6 @@ public class TrainJobRequest extends DeepDetectRequest<TrainJobResponse> {
 
 	@Override
 	protected JsonObject getContent() {
-
 		return jsonContent;
 	}
 

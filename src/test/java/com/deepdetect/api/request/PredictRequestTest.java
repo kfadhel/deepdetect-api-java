@@ -1,9 +1,9 @@
 package com.deepdetect.api.request;
 
 import static com.deepdetect.api.TestUtils.PREDICT_RESPONSE_FILE;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,13 +26,19 @@ public class PredictRequestTest extends AbstractRequestTest {
 	private static final String SERVICE_NAME = "imageserv";
 	private static final String DATA = "http://i.ytimg.com/vi/0vxOhd4qlnA/maxresdefault.jpg";
 	private JsonObject input, output, mllibParams;
+	private String inputString, outputString, mllibParamsString;
 
 	@Before
 	public void internalSetUp() {
+
+		inputString = "{\"width\":224,\"height\":224}";
+		outputString = "{\"best\":3}";
+		mllibParamsString = "{\"gpu\":true}";
+
 		JsonParser jsonParser = new JsonParser();
-		input = jsonParser.parse("{\"width\":224,\"height\":224}").getAsJsonObject();
-		output = jsonParser.parse("{\"best\":3}").getAsJsonObject();
-		mllibParams = jsonParser.parse("{\"gpu\":true}").getAsJsonObject();
+		input = jsonParser.parse(inputString).getAsJsonObject();
+		output = jsonParser.parse(outputString).getAsJsonObject();
+		mllibParams = jsonParser.parse(mllibParamsString).getAsJsonObject();
 
 	}
 
@@ -85,6 +91,31 @@ public class PredictRequestTest extends AbstractRequestTest {
 				.build().process();
 
 		RecordedRequest request = server.takeRequest(2, SECONDS);
+
+		validate(request, response);
+	}
+
+	@Test
+	public void testPredictRequestReturnsExpectedResultWhenUsingStringParams()
+			throws DeepDetectException, IOException, InterruptedException {
+
+		server.enqueue(new MockResponse().setBody(TestUtils.getResourceAsString(PREDICT_RESPONSE_FILE)));
+
+		PredictResponse response = PredictRequest.newPredictRequest() //
+				.baseURL(baseUrl) //
+				.service(SERVICE_NAME) //
+				.data(DATA) //
+				.input(input) //
+				.output(output) //
+				.mllibParams(mllibParams) //
+				.build().process();
+
+		RecordedRequest request = server.takeRequest(2, SECONDS);
+
+		validate(request, response);
+	}
+
+	private void validate(RecordedRequest request, PredictResponse response) {
 		assertThat(request.getMethod(), is("POST"));
 		assertThat(request.getPath(), is("/predict"));
 

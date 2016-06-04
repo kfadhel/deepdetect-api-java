@@ -10,8 +10,6 @@ import com.deepdetect.api.request.DeleteServiceRequest;
 import com.deepdetect.api.request.PredictRequest;
 import com.deepdetect.api.response.CreateServiceResponse;
 import com.deepdetect.api.response.PredictResponse;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class CharacterBasedDeepConvolutionalNeuralNetworks {
 
@@ -29,19 +27,15 @@ public class CharacterBasedDeepConvolutionalNeuralNetworks {
 		String[] words = Arrays.copyOfRange(args, 1, args.length);
 
 		String host = "http://localhost:8080";
-		JsonParser parser = new JsonParser();
 
 		// creating the service
 		String serviceName = "sent_en";
 		String description = "Arabic sentiment classification";
 		String mllib = "caffe";
 
-		JsonObject createSModel = parser.parse("{'templates':'../templates/caffe/','repository':'" + repository + "'}")
-				.getAsJsonObject();
-		JsonObject createSInput = parser
-				.parse("{'connector':'txt','characters':True,'sequence':140,'alphabet':\"abcdefghijklmnopqrstuvwxyz0123456789,;.!?'\"}")
-				.getAsJsonObject();
-		JsonObject createSOutput = parser.parse("{'nclasses':2}").getAsJsonObject();
+		String createSModel = "{'templates':'../templates/caffe/','repository':'" + repository + "'}";
+		String createSInput = "{'connector':'txt','characters':True,'sequence':140,'alphabet':\"abcdefghijklmnopqrstuvwxyz0123456789,;.!?'\"}";
+		String createSOutput = "{'nclasses':2}";
 
 		CreateServiceResponse createSResponse = CreateServiceRequest.newCreateServiceRequest() //
 				.baseURL(host) //

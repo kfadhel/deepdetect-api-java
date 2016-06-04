@@ -27,12 +27,17 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 	private static final String ML_LIB = "caffe";
 	private static final String SERVICE_NAME = "myserv";
 	private static final MLType ML_TYPE = SUPERVISED;
-	private JsonObject model;
-	private JsonObject input;
-	private JsonObject output;
+
+	private JsonObject model, input, mllibParams;
+
+	private String modelString, inputString, mllibParamsString;
 
 	@Before
 	public void internalSetUp() {
+
+		inputString = "{\"connector\":\"csv\"}";
+		mllibParamsString = "{\"template\":\"mlp\",\"nclasses\":9,\"activation\":\"prelu\",\"layers\":[512,512,512]}";
+		modelString = "{\"repository\":\"/home/me/models/example\"}";
 
 		model = new JsonObject();
 		model.addProperty("repository", "/home/me/models/example");
@@ -40,17 +45,17 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 		input = new JsonObject();
 		input.addProperty("connector", "csv");
 
-		output = new JsonObject();
-		output.addProperty("template", "mlp");
-		output.addProperty("nclasses", 9);
-		output.addProperty("activation", "prelu");
+		mllibParams = new JsonObject();
+		mllibParams.addProperty("template", "mlp");
+		mllibParams.addProperty("nclasses", 9);
+		mllibParams.addProperty("activation", "prelu");
 
 		JsonArray array = new JsonArray();
 		array.add(512);
 		array.add(512);
 		array.add(512);
 
-		output.add("layers", array);
+		mllibParams.add("layers", array);
 	}
 
 	@Override
@@ -68,7 +73,7 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 				.type(ML_TYPE) //
 				.input(input) //
 				.model(model) //
-				.mllibParams(output) //
+				.mllibParams(mllibParams) //
 				.build();
 	}
 
@@ -81,7 +86,7 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 				.mllib(ML_LIB) //
 				.type(ML_TYPE) //
 				.input(input) //
-				.mllibParams(output) //
+				.mllibParams(mllibParams) //
 				.build();
 	}
 
@@ -94,7 +99,7 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 				.mllib(ML_LIB) //
 				.type(ML_TYPE) //
 				.model(model) //
-				.mllibParams(output) //
+				.mllibParams(mllibParams) //
 				.build();
 	}
 
@@ -111,10 +116,38 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 				.type(ML_TYPE) //
 				.input(input) //
 				.model(model) //
-				.mllibParams(output) //
+				.mllibParams(mllibParams) //
 				.build().process();
 
 		RecordedRequest request = server.takeRequest(2, TimeUnit.SECONDS);
+
+		validate(request, response);
+
+	}
+
+	@Test
+	public void testCreateServiceRequestReturnsExpectedResultWhenUsingStringParams()
+			throws DeepDetectException, IOException, InterruptedException {
+		server.enqueue(new MockResponse().setBody(getResourceAsString(CREATE_SERVICE_RESPONSE_FILE)));
+
+		CreateServiceResponse response = CreateServiceRequest.newCreateServiceRequest() //
+				.baseURL(baseUrl) //
+				.name(SERVICE_NAME) //
+				.description(DESCRIPTION) //
+				.mllib(ML_LIB) //
+				.type(ML_TYPE) //
+				.input(inputString) //
+				.model(modelString) //
+				.mllibParams(mllibParamsString) //
+				.build().process();
+
+		RecordedRequest request = server.takeRequest(2, TimeUnit.SECONDS);
+
+		validate(request, response);
+
+	}
+
+	private void validate(RecordedRequest request, CreateServiceResponse response) {
 
 		String expectedRequestBody = "{\"mllib\":\"caffe\",\"description\":\"example classification service\",\"type\":\"supervised\",\"parameters\":{\"input\":{\"connector\":\"csv\"},\"mllib\":{\"template\":\"mlp\",\"nclasses\":9,\"activation\":\"prelu\",\"layers\":[512,512,512]}},\"model\":{\"repository\":\"/home/me/models/example\"}}";
 
@@ -124,7 +157,6 @@ public class CreateServiceRequestTest extends AbstractRequestTest {
 
 		assertThat(response.getStatus().getCode(), is(201));
 		assertThat(response.getStatus().getMessage(), is("Created"));
-
 	}
 
 }

@@ -8,24 +8,21 @@ import com.deepdetect.api.request.TrainJobRequest;
 import com.deepdetect.api.response.CreateServiceResponse;
 import com.deepdetect.api.response.InfoTrainJobResponse;
 import com.deepdetect.api.response.TrainJobResponse;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class ConvolutionalNeuralNetwork {
 
 	public static void main(String[] args) throws DeepDetectException, InterruptedException {
 
-		if (args.length<2){
+		if (args.length < 2) {
 			System.err.println("you need to provide repository and data folder");
 			System.err.println("use <repository> <datafolder>");
 			System.exit(2);
 		}
-		
+
 		String repository = args[0];
 		String dataFolder = args[1];
-		
+
 		String host = "http://localhost:8080";
-		JsonParser parser = new JsonParser();
 
 		int height = 64;
 		int width = 64;
@@ -35,14 +32,9 @@ public class ConvolutionalNeuralNetwork {
 		String description = "image classification";
 		String mllib = "caffe";
 
-		JsonObject createSModel = parser
-				.parse("{'templates':'../templates/caffe/','repository':'"+repository+"'}")
-				.getAsJsonObject();
-		JsonObject createSInput = parser.parse("{'connector':'image','width':" + width + ",'height':" + height + "}")
-				.getAsJsonObject();
-		JsonObject createSOutput = parser
-				.parse("{'template':'convnet','nclasses':18,'layers':['1CR32','1CR64','1CR128','1024'],'dropout':0.2,'activation':'prelu','rotate':True,'mirror':True}")
-				.getAsJsonObject();
+		String createSModel = "{'templates':'../templates/caffe/','repository':'" + repository + "'}";
+		String createSInput = "{'connector':'image','width':" + width + ",'height':" + height + "}";
+		String createSOutput = "{'template':'convnet','nclasses':18,'layers':['1CR32','1CR64','1CR128','1024'],'dropout':0.2,'activation':'prelu','rotate':True,'mirror':True}";
 
 		CreateServiceResponse createSResponse = CreateServiceRequest.newCreateServiceRequest() //
 				.baseURL(host) //
@@ -57,11 +49,9 @@ public class ConvolutionalNeuralNetwork {
 		System.out.println("CreateServiceResponse : " + createSResponse);
 
 		// training
-		JsonObject trainInput = parser.parse("{'test_split':0.1,'shuffle':True}").getAsJsonObject();
-		JsonObject trainMllib = parser
-				.parse("{'gpu':True,'net':{'batch_size':128},'solver':{'test_interval':1000,'iterations':16000,'base_lr':0.001,'solver_type':'SGD'}}")
-				.getAsJsonObject();
-		JsonObject trainOutput = parser.parse("{'measure':['mcll','f1']}").getAsJsonObject();
+		String trainInput = "{'test_split':0.1,'shuffle':True}";
+		String trainMllib = "{'gpu':True,'net':{'batch_size':128},'solver':{'test_interval':1000,'iterations':16000,'base_lr':0.001,'solver_type':'SGD'}}";
+		String trainOutput = "{'measure':['mcll','f1']}";
 
 		TrainJobResponse trainResponse = TrainJobRequest.newTrainJobRequest() //
 				.baseURL(host) //
@@ -83,7 +73,7 @@ public class ConvolutionalNeuralNetwork {
 				.jobId(trainResponse.getHead().getJob()) //
 				.timeout(10) //
 				.build();
-		
+
 		InfoTrainJobResponse infoResponse;
 		boolean training = true;
 		while (training) {
