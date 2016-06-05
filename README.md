@@ -6,6 +6,9 @@ For the convenience of non-maven developers the following links are provided:
 [deepdetect-api-0.0.1-SNAPSHOT bundle](https://sourceforge.net/projects/deepdetect-api-java/files/) bundle contains deepdetect-api jar with all the required 3rd-party dependencies.
 [deepdetect-api-0.0.1-SNAPSHOT jar](https://sourceforge.net/projects/deepdetect-api-java/files/) a single jar with all dependencies included.
 
+## Usage
+Please look at [the example package] (https://github.com/kfadhel/deepdetect-api-java/tree/master/samples/com/deepdetect/api/samples) for examples of use case.
+
 ## Run examples
 The source code contains a list of examples colling the api. To run a test you need first to download, build and start the DeepDetect server, prepare the needed dataset or trained model.
 
